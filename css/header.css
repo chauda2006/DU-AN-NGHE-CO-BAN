@@ -1,5 +1,5 @@
 /* ==========================================================================
-   css/header.css - THANH MENU NGANG NEON CYBERPUNK LIVE ANIMATION
+   css/header.css - THANH MENU NGANG & FIX LỖI VIDEO NỀN MỜ TỐI (FULL CODE)
    ========================================================================== */
 
 /* 1. Thanh Header bọc trên cùng cố định sát đỉnh */
@@ -178,4 +178,42 @@
         color: #00f2fe !important;
         text-shadow: 0 0 5px rgba(0, 242, 254, 0.6);
     }
+}
+
+/* ==========================================================================
+   5. CSS XỬ LÝ VIDEO BACKGROUND KHÔNG GIAN SỐ (ĐÃ FIX LỖI TỐI ĐEN LỚP PHỦ)
+   ========================================================================== */
+
+/* Khung bọc video phủ kín toàn bộ màn hình trình duyệt */
+.video-bg-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: -2; /* Ép chìm hoàn toàn xuống dưới cùng, nằm dưới tất cả nội dung web */
+    overflow: hidden;
+}
+
+/* Ép nội dung video căng phẳng tràn viền không bị méo */
+.video-bg-content {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1; /* Video nằm ở tầng dưới bên trong khối bọc */
+}
+
+/* LỚP PHỦ MỜ ĐEN CHUẨN XÁC - ĐÃ ÉP ĐÈ LÊN BỀ MẶT VIDEO */
+.video-bg-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    /* Mã màu đen đặc phủ 85% giúp nền tối sâu hẳn, dịu mắt, nhìn rõ chữ */
+    background: rgba(4, 4, 12, 0.85) !important; 
+    z-index: 2; /* Lớn hơn video (z-index: 1) nên bắt buộc phải phủ đè lên video */
 }

@@ -1,5 +1,5 @@
 /* ==========================================================================
-   css/index.css - FULL HIỆU ỨNG NEON CHUYỂN SẮC & CYBERPUNK TRANG CHỦ
+   css/index.css - FULL HIỆU ỨNG NEON CHUYỂN SẮC & CYBERPUNK TRANG CHỦ (ĐÃ FIX ẢNH)
    ========================================================================== */
 
 /* 1. KHỞI TẠO BIẾN MÀU NEON CHUYỂN SẮC */
@@ -79,7 +79,7 @@ body {
     animation: equalizerMove 0.6s ease-in-out infinite alternate;
 }
 
-/* 4. KHUNG LƯỚI KHÔNG GIAN 3D CỦA THẺ BÀI HÁT */
+/* 4. KHUNG LƯỚI KHÔNG GIAN 3D CỦA THÈ BÀI HÁT */
 .song-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
@@ -106,7 +106,6 @@ body {
 /* --- TƯƠNG TÁC HOVER: Thẻ bài lật nghiêng 3D, bừng sáng đổi màu chuyển sắc --- */
 .song-card:hover {
     transform: translateY(-12px) rotateX(6deg) rotateY(6deg);
-    /* Đổi màu viền sang xanh neon rực rỡ */
     border-color: var(--neon-cyan);
     box-shadow: 
         0 0 25px rgba(0, 242, 254, 0.4),
@@ -139,43 +138,57 @@ body {
     opacity: 1;
 }
 
-/* 6. VÒNG TRÒN ĐIỆN TỬ BAO QUANH ẢNH ĐẠI DIỆN */
-.song-thumb {
+/* 6. KHUNG CHỨA ẢNH THẬT (ĐÃ FIX LỖI CO NHỎ VÀ BO TRÒN NEON) */
+.song-thumb-wrapper {
     width: 100%;
     aspect-ratio: 1/1;
     background: rgba(15, 15, 35, 0.95);
     border-radius: 12px;
     margin-bottom: 22px;
+    position: relative;
+    border: 2px solid rgba(157, 0, 255, 0.35);
+    box-shadow: inset 0 0 25px rgba(0, 0, 0, 0.9);
+    overflow: hidden; /* Cắt gọn ảnh thừa để giữ dáng bo góc */
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 46px;
-    position: relative;
-    border: 2px solid rgba(157, 0, 255, 0.35);
     transition: all 0.4s ease;
-    box-shadow: inset 0 0 25px rgba(0, 0, 0, 0.9);
 }
 
-/* Khi di chuột vào bài hát, vòng tròn ảnh đại diện đổi màu phát sáng */
-.song-card:hover .song-thumb {
+/* Định dạng thẻ ảnh thật bên trong */
+.song-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Giúp ảnh ca sĩ vừa khít khung vuông không bị méo */
+    transition: transform 0.5s ease;
+}
+
+/* Khi hover, khung ảnh đổi màu phát sáng và ảnh hơi phóng to */
+.song-card:hover .song-thumb-wrapper {
     border-color: var(--neon-pink);
     box-shadow: 0 0 25px rgba(255, 0, 127, 0.4);
-    transform: scale(1.04);
 }
 
-/* Vòng tròn nét đứt Cyberpunk tự động xoay ngược hướng khi hover */
-.song-thumb::after {
+.song-card:hover .song-img {
+    transform: scale(1.08) rotate(1deg); /* Ảnh hơi zoom nhẹ đầy nghệ thuật */
+}
+
+/* Vòng tròn nét đứt Cyberpunk tự động hiện ra và xoay ngược hướng khi hover */
+.song-thumb-wrapper::after {
     content: '';
     position: absolute;
-    width: 107%;
-    height: 107%;
+    top: -3%;
+    left: -3%;
+    width: 106%;
+    height: 106%;
     border: 1.5px dashed var(--neon-cyan);
     border-radius: 14px;
     opacity: 0;
     transition: 0.5s ease;
+    pointer-events: none;
 }
 
-.song-card:hover .song-thumb::after {
+.song-card:hover .song-thumb-wrapper::after {
     opacity: 1;
     transform: rotate(-180deg);
 }
