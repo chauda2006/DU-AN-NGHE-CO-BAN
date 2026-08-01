@@ -5,8 +5,8 @@ $song_artist  = isset($_GET['artist']) ? htmlspecialchars($_GET['artist']) : "Ar
 $song_img     = isset($_GET['img']) ? htmlspecialchars($_GET['img']) : "images/ariana grande.png";
 $song_music   = isset($_GET['music']) ? htmlspecialchars($_GET['music']) : "mp3/ariana grande.mp3";
 
-$song_type    = isset($_GET['type']) ? htmlspecialchars($_GET['type']) : "Âu Mỹ (Nước ngoài)";
-$song_date    = isset($_GET['date']) ? htmlspecialchars($_GET['date']) : "Đang cập nhật";
+$song_type    = isset($_GET['type']) ? htmlspecialchars($_GET['type']) : "Pop (Nước ngoài)";
+$song_date    = isset($_GET['date']) ? htmlspecialchars($_GET['date']) : "31/07/2026";
 $song_story   = isset($_GET['story']) ? htmlspecialchars($_GET['story']) : "Bài hát là lời tự sự đầy mâu thuẫn về một tình yêu sâu sắc, nơi nhân vật chính vừa oán giận vừa biết ơn vì đối phương đã khiến mình yêu điên cuồng đến đánh mất lý trí.";
 $song_express = isset($_GET['express']) ? htmlspecialchars($_GET['express']) : "Tác giả thể hiện ca khúc bằng những nốt cao nghẹn ngào kết hợp bản phối R&B đương đại, tạo nên sự giằng xé nội tâm mãnh liệt giữa lý trí và con tim.";
 ?>
@@ -362,6 +362,36 @@ $song_express = isset($_GET['express']) ? htmlspecialchars($_GET['express']) : "
             }
             localStorage.setItem('music_favorites', JSON.stringify(favs));
         };
+                // Tìm đoạn player.addEventListener('play', ...) trong file player.php và sửa lại như sau:
+        player.addEventListener('play', () => {
+            cdDisk.style.animationPlayState = 'running';
+            
+            if (!audioContext) { setupAudioContext(); } 
+            else if (audioContext.state === 'suspended') { audioContext.resume(); }
+
+            // 1. GHI NHẬN LỊCH SỬ NGHE NHẠC (Đã làm ở bước trước)
+            let history = JSON.parse(localStorage.getItem('music_history')) || [];
+            history = history.filter(item => item.title !== currentSong.title);
+            history.unshift(currentSong);
+            localStorage.setItem('music_history', JSON.stringify(history));
+
+            // 2. BỘ ĐẾM LƯỢT NGHE TỰ ĐỘNG ĐỂ LÀM BẢNG XẾP HẠNG (THÊM MỚI DÒNG NÀY)
+            let views = JSON.parse(localStorage.getItem('music_views')) || {};
+            // Nếu bài hát đã có lượt nghe thì cộng thêm 1, nếu chưa có thì đặt bằng 1
+            if (views[currentSong.title]) {
+                views[currentSong.title].count += 1;
+            } else {
+                views[currentSong.title] = {
+                    title: currentSong.title,
+                    artist: currentSong.artist,
+                    img: currentSong.img,
+                    music: currentSong.music,
+                    count: 1
+                };
+            }
+            localStorage.setItem('music_views', JSON.stringify(views));
+        });
+
     </script>
 </body>
 </html>
