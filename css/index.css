@@ -1,0 +1,251 @@
+/* ==========================================================================
+   css/index.css - FULL HIỆU ỨNG NEON CHUYỂN SẮC & CYBERPUNK TRANG CHỦ
+   ========================================================================== */
+
+/* 1. KHỞI TẠO BIẾN MÀU NEON CHUYỂN SẮC */
+:root {
+    --neon-cyan: #00f2fe;
+    --neon-pink: #ff007f;
+    --neon-purple: #9d00ff;
+    --bg-dark: #04040c;
+    --card-bg: rgba(10, 10, 26, 0.75);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+}
+
+/* Nền ma trận điện tử chuyển động tịnh tiến ẩn */
+body {
+    display: block; 
+    background-color: var(--bg-dark);
+    color: #ffffff;
+    min-height: 100vh;
+    padding-top: 100px; /* Chừa khoảng trống rộng rãi dưới thanh menu ngang 75px */
+    background-image: 
+        linear-gradient(rgba(0, 242, 254, 0.015) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 242, 254, 0.015) 1px, transparent 1px);
+    background-size: 40px 40px;
+    animation: gridScroll 20s linear infinite; /* Lưới nền tự động trôi chậm */
+}
+
+/* 2. KHỐI NỘI DUNG CHÍNH GIỮA TRANG CHỦ */
+.main-content {
+    max-width: 1300px;
+    margin: 0 auto;
+    padding: 20px 50px;
+    position: relative;
+}
+
+/* 3. TIÊU ĐỀ NEON CHUYỂN SẮC & CHỚP TẮT (GLOW FLICKER) */
+.welcome-title {
+    font-size: 46px;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    /* Hiệu ứng chữ chuyển sắc Gradient */
+    background: linear-gradient(90deg, #fff, var(--neon-cyan), var(--neon-pink));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 0 15px rgba(0, 242, 254, 0.6));
+    animation: titleFlicker 3s infinite alternate;
+}
+
+.section-title {
+    font-size: 24px;
+    margin: 50px 0 25px 0;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--neon-pink);
+    text-shadow: 0 0 10px rgba(255, 0, 127, 0.6), 0 0 20px rgba(255, 0, 127, 0.2);
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+/* Biểu tượng sóng Equalizer chuyển sắc nhảy tự động cạnh tiêu đề */
+.section-title::after {
+    content: '';
+    display: inline-block;
+    width: 24px;
+    height: 18px;
+    background: linear-gradient(to top, var(--neon-pink), var(--neon-cyan));
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://w3.org' viewBox='0 0 24 24'%3E%3Cpath d='M6 20h2v-4H6v4zm4 0h2V4h-2v16zm4 0h2v-9h-2v9zm4 0h2v-5h-2v5z'/%3E%3C/svg%3E") no-repeat center;
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://w3.org' viewBox='0 0 24 24'%3E%3Cpath d='M6 20h2v-4H6v4zm4 0h2V4h-2v16zm4 0h2v-9h-2v9zm4 0h2v-5h-2v5z'/%3E%3C/svg%3E") no-repeat center;
+    animation: equalizerMove 0.6s ease-in-out infinite alternate;
+}
+
+/* 4. KHUNG LƯỚI KHÔNG GIAN 3D CỦA THẺ BÀI HÁT */
+.song-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 30px;
+    perspective: 1000px; /* Kích hoạt trục chiều sâu 3D */
+}
+
+/* 5. SIÊU THẺ BÀI HÁT NEON CHUYỂN SẮC */
+.song-card {
+    background: var(--card-bg);
+    border: 1px solid rgba(0, 242, 254, 0.15);
+    border-radius: 16px;
+    padding: 25px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.7);
+}
+
+/* --- TƯƠNG TÁC HOVER: Thẻ bài lật nghiêng 3D, bừng sáng đổi màu chuyển sắc --- */
+.song-card:hover {
+    transform: translateY(-12px) rotateX(6deg) rotateY(6deg);
+    /* Đổi màu viền sang xanh neon rực rỡ */
+    border-color: var(--neon-cyan);
+    box-shadow: 
+        0 0 25px rgba(0, 242, 254, 0.4),
+        0 20px 45px rgba(0, 0, 0, 0.8),
+        inset 0 0 15px rgba(0, 242, 254, 0.2);
+}
+
+/* Thanh quét tia Laser đa sắc chạy chéo qua thẻ khi di chuột */
+.song-card::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(
+        45deg,
+        transparent,
+        rgba(0, 242, 254, 0.15),
+        rgba(255, 0, 127, 0.15),
+        transparent
+    );
+    transform: rotate(45deg);
+    transition: 0.6s;
+    opacity: 0;
+}
+
+.song-card:hover::before {
+    animation: laserSweep 1.2s forwards;
+    opacity: 1;
+}
+
+/* 6. VÒNG TRÒN ĐIỆN TỬ BAO QUANH ẢNH ĐẠI DIỆN */
+.song-thumb {
+    width: 100%;
+    aspect-ratio: 1/1;
+    background: rgba(15, 15, 35, 0.95);
+    border-radius: 12px;
+    margin-bottom: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 46px;
+    position: relative;
+    border: 2px solid rgba(157, 0, 255, 0.35);
+    transition: all 0.4s ease;
+    box-shadow: inset 0 0 25px rgba(0, 0, 0, 0.9);
+}
+
+/* Khi di chuột vào bài hát, vòng tròn ảnh đại diện đổi màu phát sáng */
+.song-card:hover .song-thumb {
+    border-color: var(--neon-pink);
+    box-shadow: 0 0 25px rgba(255, 0, 127, 0.4);
+    transform: scale(1.04);
+}
+
+/* Vòng tròn nét đứt Cyberpunk tự động xoay ngược hướng khi hover */
+.song-thumb::after {
+    content: '';
+    position: absolute;
+    width: 107%;
+    height: 107%;
+    border: 1.5px dashed var(--neon-cyan);
+    border-radius: 14px;
+    opacity: 0;
+    transition: 0.5s ease;
+}
+
+.song-card:hover .song-thumb::after {
+    opacity: 1;
+    transform: rotate(-180deg);
+}
+
+/* 7. CHỮ HIỂN THỊ TRÊN THẺ */
+.song-name {
+    font-size: 17px;
+    font-weight: 700;
+    color: #ffffff;
+    margin-bottom: 6px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: color 0.3s ease;
+}
+
+/* Tên bài hát đổi sang màu Neon Cyan phát sáng khi hover */
+.song-card:hover .song-name {
+    color: var(--neon-cyan);
+    text-shadow: 0 0 8px rgba(0, 242, 254, 0.7);
+}
+
+.song-artist {
+    font-size: 13px;
+    color: #8a8ab0;
+    letter-spacing: 0.5px;
+    transition: color 0.3s ease;
+}
+
+.song-card:hover .song-artist {
+    color: #ffffff;
+}
+
+/* --- TƯƠNG TÁC CLICK CHUỘT: Co rút nén phím cơ đổi màu Neon Pink --- */
+.song-card:active {
+    transform: scale(0.94) rotateX(0deg) rotateY(0deg);
+    border-color: var(--neon-pink);
+    box-shadow: 0 0 35px rgba(255, 0, 127, 0.8);
+}
+
+/* ==========================================================================
+   8. TOÀN BỘ HOẠT ẢNH CHUYỂN ĐỘNG HỆ THỐNG (CSS3 KEYFRAMES KHỦNG)
+   ========================================================================== */
+
+/* Trôi lưới ảo dưới nền không gian */
+@keyframes gridScroll {
+    0% { background-position: 0 0; }
+    100% { background-position: 40px 40px; }
+}
+
+/* Chớp nháy đèn neon lỗi của dòng chữ tiêu đề lớn */
+@keyframes titleFlicker {
+    0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
+        filter: drop-shadow(0 0 15px rgba(0, 242, 254, 0.6)) drop-shadow(0 0 30px rgba(157, 0, 255, 0.4));
+        opacity: 1;
+    }
+    20%, 24%, 55% {
+        filter: none;
+        opacity: 0.8;
+    }
+}
+
+/* Nhảy sóng âm Equalizer */
+@keyframes equalizerMove {
+    0% { transform: scaleY(0.3); }
+    100% { transform: scaleY(1.4); }
+}
+
+/* Đường tia Laser đa sắc quét qua thẻ */
+@keyframes laserSweep {
+    0% { top: -100%; left: -100%; }
+    100% { top: 100%; left: 100%; }
+}

@@ -1,0 +1,181 @@
+/* ==========================================================================
+   css/header.css - THANH MENU NGANG NEON CYBERPUNK LIVE ANIMATION
+   ========================================================================== */
+
+/* 1. Thanh Header bọc trên cùng cố định sát đỉnh */
+.top-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 75px;
+    background-color: #070714; /* Nền tối sâu độc quyền Cyberpunk */
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* Đẩy logo sang trái, menu dạt hết sang phải */
+    padding: 0 50px;
+    border-bottom: 2px solid rgba(0, 242, 254, 0.25);
+    box-shadow: 0 4px 30px rgba(0, 242, 254, 0.15);
+    z-index: 1000;
+    backdrop-filter: blur(10px); /* Hiệu ứng kính mờ xuyên thấu */
+}
+
+/* 2. Logo phát sáng nhịp điệu Cyberpunk bên trái */
+.logo h2 {
+    font-size: 24px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: #ffffff;
+    text-shadow: 0 0 5px #00f2fe, 0 0 10px #00f2fe, 0 0 20px #9d00ff;
+    animation: neonPulseMenu 2.5s infinite alternate;
+}
+
+/* 3. Cụm điều hướng menu chữ ngang đẩy sát sang góc phải */
+.navigation ul {
+    list-style: none;
+    display: flex; /* Ép các mục chữ xếp thành một hàng ngang */
+    align-items: center;
+    gap: 15px; /* Khoảng cách vừa vặn giữa các chữ menu */
+    margin: 0;
+    padding: 0;
+}
+
+.navigation ul li {
+    display: inline-block;
+    position: relative;
+}
+
+/* Định dạng các nút bấm chữ menu */
+.navigation ul li a {
+    color: #a0a0c0;
+    text-decoration: none;
+    font-size: 15px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    padding: 10px 18px;
+    border-radius: 8px;
+    position: relative;
+    overflow: hidden; /* Bắt buộc để cắt hiệu ứng tia laser chạy ngầm bên trong */
+    border: 1px solid transparent;
+    transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.navigation ul li a .icon {
+    margin-right: 8px;
+    font-size: 16px;
+    transition: transform 0.3s ease;
+}
+
+/* --- HIỆU ỨNG 1: HOVER CHUỘT (Neon Glow & Chữ đổi màu) --- */
+.navigation ul li a:hover {
+    color: #00f2fe;
+    background: rgba(0, 242, 254, 0.05);
+    border-color: rgba(0, 242, 254, 0.5);
+    text-shadow: 0 0 8px rgba(0, 242, 254, 0.7);
+    box-shadow: 0 0 15px rgba(0, 242, 254, 0.2), inset 0 0 10px rgba(0, 242, 254, 0.1);
+}
+
+.navigation ul li a:hover .icon {
+    transform: scale(1.2) translateY(-1px);
+}
+
+/* --- HIỆU ỨNG 2: TIA LASER CHẠY TỚI LUI (Quét ánh sáng ngầm) --- */
+.navigation ul li a::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -150%; /* Nằm ẩn hoàn toàn bên trái nút */
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(0, 242, 254, 0.25),
+        transparent
+    );
+    transition: 0s;
+}
+
+/* Khi di chuột qua chữ nào, tia laser sáng rực của chữ đó tự động quét từ trái sang phải */
+.navigation ul li a:hover::before {
+    left: 150%;
+    transition: 0.8s ease-in-out;
+}
+
+/* --- HIỆU ỨNG 3: TƯƠNG TÁC CLICK CHUỘT (Sóng phản hồi Ripple) --- */
+.navigation ul li a::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: width 0.4s ease-out, height 0.4s ease-out, opacity 0.4s ease-out;
+    opacity: 0;
+}
+
+.navigation ul li a:active::after {
+    width: 200px;
+    height: 200px;
+    opacity: 0;
+    transition: 0s; /* Reset tia sóng ngay khi nhả chuột */
+}
+
+/* --- HIỆU ỨNG 4: NÚT VIP HÀNG NGANG PHÁT SÁNG KÉP (Pulse Wave) --- */
+.navigation ul li a.btn-vip {
+    border: 2px solid #ff007f !important;
+    color: #ff007f !important;
+    background: rgba(255, 0, 127, 0.02);
+    font-weight: 700;
+    text-shadow: 0 0 5px rgba(255, 0, 127, 0.6);
+    box-shadow: 0 0 10px rgba(255, 0, 127, 0.2);
+    animation: vipPulseHorizontal 3s infinite alternate; /* Nhịp điệu nhấp nháy riêng cho gói VIP */
+}
+
+.navigation ul li a.btn-vip:hover {
+    background: #ff007f !important;
+    color: #ffffff !important;
+    border-color: #ff007f !important;
+    box-shadow: 0 0 20px #ff007f, 0 0 40px rgba(255, 0, 127, 0.4) !important;
+    text-shadow: none;
+}
+
+/* Nút VIP cũng có tia laser chạy qua màu hồng */
+.navigation ul li a.btn-vip::before {
+    background: linear-gradient(90deg, transparent, rgba(255, 0, 127, 0.4), transparent);
+}
+
+/* ==========================================================================
+   4. ĐỊNH NGHĨA HOẠT ẢNH CHUYỂN ĐỘNG CSS3 KEYFRAMES KHÔNG GIAN NGANG
+   ========================================================================== */
+
+/* Nhịp điệu lấp lánh chữ Logo */
+@keyframes neonPulseMenu {
+    0%, 100% {
+        text-shadow: 0 0 5px #00f2fe, 0 0 15px #00f2fe, 0 0 30px #9d00ff;
+        opacity: 1;
+    }
+    50% {
+        text-shadow: 0 0 3px #00f2fe, 0 0 8px #00f2fe, 0 0 15px #9d00ff;
+        opacity: 0.88;
+    }
+}
+
+/* Nhịp điệu đổi màu tỏa sáng biên ngang khối VIP */
+@keyframes vipPulseHorizontal {
+    0% {
+        box-shadow: 0 0 8px rgba(255, 0, 127, 0.3), 0 0 2px #ff007f;
+        border-color: #ff007f;
+    }
+    100% {
+        box-shadow: 0 0 18px rgba(0, 242, 254, 0.4), 0 0 4px #00f2fe;
+        border-color: #00f2fe;
+        color: #00f2fe !important;
+        text-shadow: 0 0 5px rgba(0, 242, 254, 0.6);
+    }
+}
