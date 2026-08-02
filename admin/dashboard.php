@@ -126,7 +126,7 @@ try {
             <a href="destination_add.php" class="btn-action">Thêm bài hát mới</a>
             <a href="logout.php" class="btn-logout">Đăng xuất</a>
         </div>
-    </div>
+</div>
 
     <table>
         <thead>
