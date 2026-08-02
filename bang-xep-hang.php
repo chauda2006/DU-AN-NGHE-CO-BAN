@@ -1,3 +1,17 @@
+<?php
+// BẮT BUỘC ĐẶT Ở DÒNG SỐ 1 - TRÊN CÙNG CỦA FILE BANG-XEP-HANG.PHP
+include 'header.php';
+include 'database.php';
+
+// Nạp danh sách bài hát từ Database MySQL để JavaScript đối chiếu dữ liệu thật
+try {
+    $stmt = $conn->query("SELECT id, title, artist, img FROM songs");
+    $db_songs = $stmt->fetchAll(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+    $db_songs = [];
+}
+?>
+
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -167,7 +181,7 @@
             // Thông báo hướng dẫn nếu người dùng chưa mở nghe bài nhạc nào
             bxhView.innerHTML = `
                 <div class="no-data">
-                    📊 Hiện tại chưa có dữ liệu xu hướng.<br>
+                    Hiện tại chưa có dữ liệu xu hướng.<br>
                     <span style="font-size: 14px; color: #606080; display: inline-block; margin-top: 10px;">
                         Hãy quay lại trang chủ và thưởng thức thật nhiều bài hát để tạo nên bảng xếp hạng riêng của bạn!
                     </span>
@@ -198,11 +212,11 @@
                         
                         <div class="bxh-details">
                             <div class="bxh-title">${song.title}</div>
-                            <div class="bxh-artist">🎤 Ca sĩ: ${song.artist}</div>
+                            <div class="bxh-artist"> Ca sĩ: ${song.artist}</div>
                         </div>
                         
                         <!-- Hiển thị bộ đếm số lượt nghe thật -->
-                        <div class="bxh-views">🎧 ${song.count} lượt nghe</div>
+                        <div class="bxh-views"> ${song.count} lượt nghe</div>
                     </div>
                 `;
             });

@@ -1,21 +1,33 @@
 <?php
-// HẤP THỤ DỮ LIỆU ĐƯỢC TRUYỀN TỪ TRANG CHỦ SANG
-$song_title   = isset($_GET['title']) ? htmlspecialchars($_GET['title']) : "Hate That I Made You Love Me";
-$song_artist  = isset($_GET['artist']) ? htmlspecialchars($_GET['artist']) : "Ariana Grande";
-$song_img     = isset($_GET['img']) ? htmlspecialchars($_GET['img']) : "images/ariana grande.png";
-$song_music   = isset($_GET['music']) ? htmlspecialchars($_GET['music']) : "mp3/ariana grande.mp3";
+// BẮT BUỘC NẰM Ở DÒNG SỐ 1 - TRÊN CÙNG CỦA FILE PLAYER.PHP
+include 'header.php';
+include 'database.php';
 
-$song_type    = isset($_GET['type']) ? htmlspecialchars($_GET['type']) : "Pop (Nước ngoài)";
-$song_date    = isset($_GET['date']) ? htmlspecialchars($_GET['date']) : "31/07/2026";
-$song_story   = isset($_GET['story']) ? htmlspecialchars($_GET['story']) : "Bài hát là lời tự sự đầy mâu thuẫn về một tình yêu sâu sắc, nơi nhân vật chính vừa oán giận vừa biết ơn vì đối phương đã khiến mình yêu điên cuồng đến đánh mất lý trí.";
-$song_express = isset($_GET['express']) ? htmlspecialchars($_GET['express']) : "Tác giả thể hiện ca khúc bằng những nốt cao nghẹn ngào kết hợp bản phối R&B đương đại, tạo nên sự giằng xé nội tâm mãnh liệt giữa lý trí và con tim.";
+// Nhận ID bài hát từ đường dẫn URL (Ví dụ: player.php?id=1)
+$id = intval($_GET['id'] ?? 0);
+
+try {
+    // Truy vấn lấy dữ liệu chi tiết của bài hát dựa theo ID
+    $stmt = $conn->prepare("SELECT * FROM songs WHERE id = :id");
+    $stmt->execute([':id' => $id]);
+    $song = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+    // Nếu không tìm thấy, báo lỗi tránh làm vỡ giao diện
+    if (!$song) {
+        die("<div style='color:#fff; text-align:center; margin-top:150px; font-family:sans-serif;'><h3>Không tìm thấy bài hát này trên hệ thống!</h3><a href='index.php' style='color:#00f2fe;'>Quay lại trang chủ</a></div>");
+    }
+} catch (PDOException $e) {
+    die("Lỗi kết nối cơ sở dữ liệu: " . $e->getMessage());
+}
 ?>
+
 <!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Đang phát: <?php echo $song_title; ?></title>
+    <title>Đang phát: <?php echo htmlspecialchars($song['title']); ?></title>
+
     <link rel="stylesheet" href="css/index.css">
     <style>
      /* ==========================================================================
@@ -87,7 +99,8 @@ $song_express = isset($_GET['express']) ? htmlspecialchars($_GET['express']) : "
             width: 100%;
             height: 100%;
             border-radius: 50%;
-            background-image: url('<?php echo $song_img; ?>'); 
+            background-image: url('<?php echo htmlspecialchars($song['img']); ?>');
+
             background-size: contain;
             background-repeat: no-repeat;
             background-position: center;
@@ -197,8 +210,9 @@ $song_express = isset($_GET['express']) ? htmlspecialchars($_GET['express']) : "
                 <!-- VÙNG BÊN TRÁI: ĐĨA CD XOAY VÀ TRÌNH PHÁT AUDIO -->
                 <div class="player-left">
                     <!-- Khung bọc đĩa để kích hoạt hiệu ứng giật neon theo nhịp trống bass -->
+                    <!-- Tự động nạp hình ảnh từ database làm nền cho đĩa CD -->
                     <div class="cd-disk-wrapper" id="cdWrapper">
-                        <div class="cd-disk" id="cdDisk"></div>
+                        <div class="cd-disk" id="cdDisk" style="background-image: url('<?php echo htmlspecialchars($song['img']); ?>'); background-size: cover; background-position: center;"></div>
                     </div>
                     
                     <!-- KHỐI NÚT TƯƠNG TÁC THẢ TIM & REPEAT -->
@@ -210,32 +224,33 @@ $song_express = isset($_GET['express']) ? htmlspecialchars($_GET['express']) : "
                     <!-- TRÌNH PHÁT NHẠC AUDIO NEON -->
                     <div class="audio-wrapper">
                         <audio id="musicPlayer" controls autoplay crossorigin="anonymous">
-                            <source src="<?php echo $song_music; ?>" type="audio/mpeg">
+                            <source src="<?php echo htmlspecialchars($song['music']); ?>" type="audio/mpeg">
+                            Trình duyệt không hỗ trợ phát âm thanh này.
                         </audio>
                     </div>
                 </div>
 
                 <!-- VÙNG BÊN PHẢI: HIỂN THỊ THÔNG TIN CHI TIẾT BÀI HÁT -->
                 <div class="player-right">
-                    <h1 class="song-title-main"><?php echo $song_title; ?></h1>
-                    <div class="song-artist-main">Ca sĩ: <?php echo $song_artist; ?></div>
+                    <h1 class="song-title-main"><?php echo htmlspecialchars($song['title']); ?></h1>
+                    <div class="song-artist-main">Ca sĩ: <?php echo htmlspecialchars($song['artist']); ?></div>
 
-                    <!-- Các thẻ phân loại nhạc -->
+                    <!-- Các thẻ phân loại nhạc lấy trực tiếp từ database nâng cao -->
                     <div class="meta-tags">
-                        <span class="tag tag-type">Loại nhạc: <?php echo $song_type; ?></span>
-                        <span class="tag tag-date">Sáng tác: <?php echo $song_date; ?></span>
+                        <span class="tag tag-type">Loại nhạc: <?php echo htmlspecialchars($song['genre'] ?? 'V-Pop'); ?></span>
+                        <span class="tag tag-date">Sáng tác: <?php echo htmlspecialchars($song['release_date'] ?? 'Năm 2026'); ?></span>
                     </div>
 
                     <!-- Ý nghĩa bài hát -->
                     <div class="info-section">
                         <div class="info-heading">Tiểu sử & Ý nghĩa bài hát</div>
-                        <div class="info-body"><?php echo $song_story; ?></div>
+                        <div class="info-body"><?php echo nl2br(htmlspecialchars($song['story'] ?? 'Chưa cập nhật câu chuyện ý nghĩa.')); ?></div>
                     </div>
 
                     <!-- Phương thức biểu đạt -->
                     <div class="info-section">
                         <div class="info-heading">Phong cách thể hiện của tác giả</div>
-                        <div class="info-body"><?php echo $song_express; ?></div>
+                        <div class="info-body"><?php echo nl2br(htmlspecialchars($song['expression'] ?? 'Chưa cập nhật phong cách thể hiện.')); ?></div>
                     </div>
                 </div>
 
@@ -243,7 +258,8 @@ $song_express = isset($_GET['express']) ? htmlspecialchars($_GET['express']) : "
         </div>
     </div>
 
-    <!-- 3. BỘ NÃO JAVASCRIPT ĐIỀU KHIỂN ĐỒ HỌA SÓNG NHẠC LIVE VÀ LƯU TRỮ -->
+
+       <!-- 3. BỘ NÃO JAVASCRIPT ĐIỀU KHIỂN ĐỒ HỌA SÓNG NHẠC LIVE VÀ LƯU TRỮ -->
     <script>
         const player = document.getElementById('musicPlayer');
         const cdDisk = document.getElementById('cdDisk');
@@ -253,10 +269,12 @@ $song_express = isset($_GET['express']) ? htmlspecialchars($_GET['express']) : "
 
         // Đồng bộ dữ liệu PHP sang đối tượng JavaScript động để nạp bộ nhớ máy
         const currentSong = {
-            title: "<?php echo $song_title; ?>",
-            artist: "<?php echo $song_artist; ?>",
-            img: "<?php echo $song_img; ?>",
-            music: "<?php echo $song_music; ?>",
+            id: <?= $id ?>,
+            title: "<?php echo addslashes($song['title']); ?>",
+            artist: "<?php echo addslashes($song['artist']); ?>",
+            img: "<?php echo addslashes($song['img']); ?>",
+            music: "<?php echo addslashes($song['music']); ?>",
+            genre: "<?php echo addslashes($song['genre'] ?? 'V-Pop'); ?>",
             time: new Date().toLocaleString('vi-VN')
         };
 
@@ -309,7 +327,7 @@ $song_express = isset($_GET['express']) ? htmlspecialchars($_GET['express']) : "
             cdWrapper.style.setProperty('--glow-intensity', intensity);
         }
 
-        // Chạy cài đặt âm thanh ngay khi bài nhạc bắt đầu cất lời ca
+        // XỬ LÝ SỰ KIỆN PHÁT NHẠC (PLAY) - ĐÃ GỘP HOÀN CHỈNH BỘ ĐẾM VÀ LỊCH SỬ KHÔNG BỊ TRÙNG LẶP
         player.addEventListener('play', () => {
             cdDisk.style.animationPlayState = 'running';
             
@@ -320,11 +338,35 @@ $song_express = isset($_GET['express']) ? htmlspecialchars($_GET['express']) : "
                 audioContext.resume();
             }
 
-            // Ghi nhận lịch sử nghe nhạc tự động đưa vào trang lich-su.php
-            let history = JSON.parse(localStorage.getItem('music_history')) || [];
-            history = history.filter(item => item.title !== currentSong.title);
-            history.unshift(currentSong);
-            localStorage.setItem('music_history', JSON.stringify(history));
+            // 1. GHI NHẬN LỊCH SỬ NGHE NHẠC ĐỒNG BỘ TRANG LICH-SU.PHP (DÙNG ID)
+            let historyList = JSON.parse(localStorage.getItem('listen_history')) || [];
+            // Lọc bỏ bản ghi cũ của bài hát này để đẩy lượt nghe mới lên trên đầu trục thời gian
+            historyList = historyList.filter(item => parseInt(item.id) !== currentSong.id);
+            
+            // Tạo cấu trúc mốc thời gian thực: Giờ:Phút - Ngày/Tháng
+            const now = new Date();
+            const timestamp = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')} - ${String(now.getDate()).padStart(2, '0')}/${String(now.getMonth() + 1).padStart(2, '0')}`;
+            
+            historyList.unshift({ id: currentSong.id, time: timestamp });
+            if (historyList.length > 15) { historyList = historyList.slice(0, 15); }
+            localStorage.setItem('listen_history', JSON.stringify(historyList));
+
+            // 2. BỘ ĐẾM LƯỢT NGHE TỰ ĐỘNG ĐỂ LÀM BẢNG XẾP HẠNG TRÊN TRANG CHỦ
+            let views = JSON.parse(localStorage.getItem('music_views')) || {};
+            let key = currentSong.title + " - " + currentSong.artist;
+            if (views[key]) {
+                views[key].count += 1;
+            } else {
+                views[key] = {
+                    id: currentSong.id,
+                    title: currentSong.title,
+                    artist: currentSong.artist,
+                    img: currentSong.img,
+                    music: currentSong.music,
+                    count: 1
+                };
+            }
+            localStorage.setItem('music_views', JSON.stringify(views));
         });
 
         player.addEventListener('pause', () => {
@@ -345,53 +387,23 @@ $song_express = isset($_GET['express']) ? htmlspecialchars($_GET['express']) : "
             this.classList.toggle('active-repeat', player.loop);
         };
 
-        // LOGIC THẢ TIM YÊU THÍCH (LƯU VÀO THƯ VIỆN SO-THICH.PHP)
-        let favorites = JSON.parse(localStorage.getItem('music_favorites')) || [];
-        if (favorites.some(item => item.title === currentSong.title)) {
+        // LOGIC THẢ TIM YÊU THÍCH ĐỒNG BỘ VỚI TRANG SO-THICH.PHP (LƯU MẢNG ID)
+        let favorites = JSON.parse(localStorage.getItem('my_favorites')) || [];
+        if (favorites.includes(currentSong.id)) {
             heartBtn.classList.add('active-heart');
         }
 
         heartBtn.onclick = function() {
-            let favs = JSON.parse(localStorage.getItem('music_favorites')) || [];
+            let favs = JSON.parse(localStorage.getItem('my_favorites')) || [];
             if (this.classList.contains('active-heart')) {
-                favs = favs.filter(item => item.title !== currentSong.title);
+                favs = favs.filter(favId => favId !== currentSong.id);
                 this.classList.remove('active-heart');
             } else {
-                favs.unshift(currentSong);
+                favs.unshift(currentSong.id);
                 this.classList.add('active-heart');
             }
-            localStorage.setItem('music_favorites', JSON.stringify(favs));
+            localStorage.setItem('my_favorites', JSON.stringify(favs));
         };
-                // Tìm đoạn player.addEventListener('play', ...) trong file player.php và sửa lại như sau:
-        player.addEventListener('play', () => {
-            cdDisk.style.animationPlayState = 'running';
-            
-            if (!audioContext) { setupAudioContext(); } 
-            else if (audioContext.state === 'suspended') { audioContext.resume(); }
-
-            // 1. GHI NHẬN LỊCH SỬ NGHE NHẠC (Đã làm ở bước trước)
-            let history = JSON.parse(localStorage.getItem('music_history')) || [];
-            history = history.filter(item => item.title !== currentSong.title);
-            history.unshift(currentSong);
-            localStorage.setItem('music_history', JSON.stringify(history));
-
-            // 2. BỘ ĐẾM LƯỢT NGHE TỰ ĐỘNG ĐỂ LÀM BẢNG XẾP HẠNG (THÊM MỚI DÒNG NÀY)
-            let views = JSON.parse(localStorage.getItem('music_views')) || {};
-            // Nếu bài hát đã có lượt nghe thì cộng thêm 1, nếu chưa có thì đặt bằng 1
-            if (views[currentSong.title]) {
-                views[currentSong.title].count += 1;
-            } else {
-                views[currentSong.title] = {
-                    title: currentSong.title,
-                    artist: currentSong.artist,
-                    img: currentSong.img,
-                    music: currentSong.music,
-                    count: 1
-                };
-            }
-            localStorage.setItem('music_views', JSON.stringify(views));
-        });
-
     </script>
 </body>
 </html>
